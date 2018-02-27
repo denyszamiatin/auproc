@@ -1,11 +1,15 @@
+from glob import glob
+
+from mutagen.easyid3 import EasyID3
+
+INIT_DIR = '/Users/sergii/Downloads/mp3/*.mp3'
 
 
-def extract_dir(dir = '/Users/sergii/Downloads/mp3/*.mp3'):
-    from glob import glob
-    from mutagen.easyid3 import EasyID3
+def get_filenames(dir_=INIT_DIR):
+    return glob(dir_)
 
-    d = {EasyID3(track) for track in glob(dir)}
-    return d
 
+def get_tags(filenames):
+    return [EasyID3(filename) for filename in filenames]
 
 # TODO: get more clarity on objectives
