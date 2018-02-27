@@ -13,3 +13,4 @@ def get_tags(filenames):
     return [EasyID3(filename) for filename in filenames]
 
 # TODO: get more clarity on objectives
+# TODO: make decision what type get_tags should return
