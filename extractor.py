@@ -2,7 +2,9 @@ import glob
 import base64
 import json
 
+
 from mutagen.easyid3 import EasyID3
+from mutagen.mp3 import MP3
 
 INIT_DIR = '/Users/sergii/Downloads/mp3/*.mp3'
 
@@ -19,6 +21,10 @@ def save_audiofile(filename, obj):
     obj['audio'] = base64.b64encode(obj['audio'])
     with open('%s.json' % filename, 'wt') as f:
         json.dump(obj, f)
+
+def file_time(filename):
+    return int(MP3(filename).info.length)
+
 
 
 # TODO: get more clarity on objectives
