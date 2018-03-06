@@ -25,7 +25,11 @@ def save_audiofile(filename, obj):
 def file_time(filename):
     return int(MP3(filename).info.length)
 
+def volume_level(filename):
+	sound = AudioSegment.from_file(filename, format="mp3")
+    return sound.max
 
 
 # TODO: get more clarity on objectives
 # TODO: make decision what type get_tags should return
+# TODO: add extraction minimal volume level of a track to the function volume_level
