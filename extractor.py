@@ -22,7 +22,7 @@ def save_audiofile(filename, obj):
     with open('%s.json' % filename, 'wt') as f:
         json.dump(obj, f)
 
-def file_time(filename):
+def audio_track_length(filename):
     return int(MP3(filename).info.length)
 
 def volume_level(filename):
