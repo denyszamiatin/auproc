@@ -3,6 +3,7 @@ import base64
 import json
 
 import numpy as np
+import soundfile as sf
 from mutagen.easyid3 import EasyID3
 from mutagen.mp3 import MP3
 from pydub import AudioSegment
@@ -36,3 +37,7 @@ def get_audiodata_from_mp3(filename):
 
 def get_volume(stream):
     return min(stream), max(stream)
+
+
+def get_fft(filename):
+    return [np.fft.fft(block) for block in sf.blocks(filename, blocksize=1024)]
