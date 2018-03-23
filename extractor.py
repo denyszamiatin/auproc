@@ -34,8 +34,8 @@ class AudioData:
     def get_volume(self, stream):
         return min(stream), max(stream)
 
-    def get_fft(self, filename):
-        sound = AudioSegment.from_mp3(filename)
-        name_song = filename.split(".")[0]
-        sound.export('{0}.wav'.format(name_song), format="wav")
-        return [np.fft.fft(block) for block in sf.blocks('{0}.wav'.format(name_song), blocksize=1024)]
+    def get_fft(self, stream):
+        array_count = int(len(stream) / 1024)
+        return [np.fft.fft(block) for block in np.array_split(stream, array_count)]
+
+
