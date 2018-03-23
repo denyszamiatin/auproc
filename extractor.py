@@ -12,6 +12,7 @@ from pydub import AudioSegment
 class AudioData:
 
     INIT_DIR = '/Users/sergii/Downloads/mp3/*.mp3'
+    BLOCK_SIZE = 1024
 
     def get_filenames(self, dir_=INIT_DIR):
         return glob.glob(dir_)
@@ -35,7 +36,7 @@ class AudioData:
         return min(stream), max(stream)
 
     def get_fft(self, stream):
-        array_count = int(len(stream) / 1024)
-        return [np.fft.fft(block) for block in np.array_split(stream, array_count)]
-
-
+        return [np.fft.fft(block) for block in np.array_split(
+            stream,
+            len(stream) // self.BLOCK_SIZE
+        )]
