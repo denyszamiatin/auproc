@@ -3,40 +3,36 @@ import base64
 import json
 
 import numpy as np
-import soundfile as sf
 from mutagen.easyid3 import EasyID3
 from mutagen.mp3 import MP3
 from pydub import AudioSegment
 
+INIT_DIR = '/Users/sergii/Downloads/mp3/*.mp3'
+
+
+def get_filenames(dir_=INIT_DIR):
+    return glob.glob(dir_)
+
 
 class AudioData:
 
-    INIT_DIR = '/Users/sergii/Downloads/mp3/*.mp3'
     BLOCK_SIZE = 1024
 
-    def get_filenames(self, dir_=INIT_DIR):
-        return glob.glob(dir_)
+    def __init__(self, filename):
+        sound = AudioSegment.from_mp3(filename)
+        self.tags = EasyID3(filename)
+        self.track_length = int(MP3(filename).info.length)
+        self.audio_data = np.frombuffer(sound.raw_data, np.uint8)
+        self.min_volume = min(self.audio_data)
+        self.max_volume = max(self.audio_data)
+        self.fft = [np.fft.fft(block) for block in np.array_split(
+            self.audio_data,
+            len(self.audio_data) // self.BLOCK_SIZE
+        )]
 
-    def get_tags(self, filenames):
-        return [EasyID3(filename) for filename in filenames]
 
     def save_audiofile(self, filename, obj):
+        obj = dict(obj)
         obj['audio'] = base64.b64encode(obj['audio'])
         with open('%s.json' % filename, 'wt') as f:
             json.dump(obj, f)
-
-    def get_track_length(self, filename):
-        return int(MP3(filename).info.length)
-
-    def get_audiodata_from_mp3(self, filename):
-        sound = AudioSegment.from_mp3(filename)
-        return np.frombuffer(sound.raw_data, np.uint8)
-
-    def get_volume(self, stream):
-        return min(stream), max(stream)
-
-    def get_fft(self, stream):
-        return [np.fft.fft(block) for block in np.array_split(
-            stream,
-            len(stream) // self.BLOCK_SIZE
-        )]
