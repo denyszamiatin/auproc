@@ -30,9 +30,8 @@ class AudioData:
             len(self.audio_data) // self.BLOCK_SIZE
         )]
 
-
-    def save_audiofile(self, filename, obj):
-        obj = dict(obj)
-        obj['audio'] = base64.b64encode(obj['audio'])
+    def save_audiofile(self, filename):
+        obj = dict(self.tags)
+        obj['audio'] = base64.b64encode(self.audio_data)
         with open('%s.json' % filename, 'wt') as f:
             json.dump(obj, f)
