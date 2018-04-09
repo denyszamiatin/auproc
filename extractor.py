@@ -14,6 +14,11 @@ def get_filenames(dir_=INIT_DIR):
     return glob.glob(dir_)
 
 
+musical_instruments = {'violin': 'musical_instruments_audio/violin.mp3',
+                       'hautboy': 'musical_instruments_audio/goboj.mp3',
+                       'elektrogitara': 'musical_instruments_audio/elektrogitara.mp3'}
+
+
 class AudioData:
 
     BLOCK_SIZE = 1024
@@ -30,9 +35,8 @@ class AudioData:
             len(self.audio_data) // self.BLOCK_SIZE
         )]
 
-
-    def save_audiofile(self, filename, obj):
-        obj = dict(obj)
-        obj['audio'] = base64.b64encode(obj['audio'])
+    def save_audiofile(self, filename):
+        obj = dict(self.tags)
+        obj['audio'] = base64.b64encode(self.audio_data)
         with open('%s.json' % filename, 'wt') as f:
             json.dump(obj, f)
