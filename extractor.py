@@ -19,6 +19,10 @@ musical_instruments = {'violin': 'musical_instruments_audio/violin.mp3',
                        'elektrogitara': 'musical_instruments_audio/elektrogitara.mp3'}
 
 
+def match_target_amplitude(sound):
+    return sound.apply_gain(sound.max_dBFS)
+
+
 class AudioData:
 
     BLOCK_SIZE = 1024
