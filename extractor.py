@@ -31,20 +31,20 @@ class AudioData:
         self.sound = AudioSegment.from_mp3(filename)
         self.tags = EasyID3(filename)
         self.track_length = int(MP3(filename).info.length)
-        self.min_volume = min(self._get_audio_data())
-        self.max_volume = max(self._get_audio_data())
+        self.min_volume = min(self._get_audio_stream())
+        self.max_volume = max(self._get_audio_stream())
         self.fft = [np.fft.fft(block) for block in np.array_split(
-            self._get_audio_data(),
-            len(self._get_audio_data()) // self.BLOCK_SIZE
+            self._get_audio_stream(),
+            len(self._get_audio_stream()) // self.BLOCK_SIZE
         )]
 
     def save_audiofile(self, filename):
         obj = dict(self.tags)
-        obj['audio'] = base64.b64encode(self._get_audio_data())
+        obj['audio'] = base64.b64encode(self._get_audio_stream())
         with open('%s.json' % filename, 'wt') as f:
             json.dump(obj, f)
 
-    def _get_audio_data(self):
+    def _get_audio_stream(self):
         return np.frombuffer(self.sound.raw_data, np.uint8)
 
 
