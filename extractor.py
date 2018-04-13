@@ -28,19 +28,26 @@ class AudioData:
     BLOCK_SIZE = 1024
 
     def __init__(self, filename):
-        sound = AudioSegment.from_mp3(filename)
+        self.sound = AudioSegment.from_mp3(filename)
         self.tags = EasyID3(filename)
         self.track_length = int(MP3(filename).info.length)
-        self.audio_data = np.frombuffer(sound.raw_data, np.uint8)
-        self.min_volume = min(self.audio_data)
-        self.max_volume = max(self.audio_data)
+        self.min_volume = min(self._get_audio_data())
+        self.max_volume = max(self._get_audio_data())
         self.fft = [np.fft.fft(block) for block in np.array_split(
-            self.audio_data,
-            len(self.audio_data) // self.BLOCK_SIZE
+            self._get_audio_data(),
+            len(self._get_audio_data()) // self.BLOCK_SIZE
         )]
 
     def save_audiofile(self, filename):
         obj = dict(self.tags)
-        obj['audio'] = base64.b64encode(self.audio_data)
+        obj['audio'] = base64.b64encode(self._get_audio_data())
         with open('%s.json' % filename, 'wt') as f:
             json.dump(obj, f)
+
+    def _get_audio_data(self):
+        return np.frombuffer(self.sound.raw_data, np.uint8)
+
+
+m = AudioData(musical_instruments['violin'])
+n = m.max_volume
+print(n)
