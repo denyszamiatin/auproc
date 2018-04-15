@@ -29,14 +29,11 @@ class AudioData:
 
     def __init__(self, filename):
         self.sound = AudioSegment.from_mp3(filename)
+        self.audio_stream = self._get_audio_stream()
         self.tags = EasyID3(filename)
         self.track_length = int(MP3(filename).info.length)
-        self.min_volume = min(self._get_audio_stream())
-        self.max_volume = max(self._get_audio_stream())
-        self.fft = [np.fft.fft(block) for block in np.array_split(
-            self._get_audio_stream(),
-            len(self._get_audio_stream()) // self.BLOCK_SIZE
-        )]
+        self.min_volume = min(self.audio_stream)
+        self.max_volume = max(self.audio_stream)
 
     def save_audiofile(self, filename):
         obj = dict(self.tags)
@@ -47,7 +44,12 @@ class AudioData:
     def _get_audio_stream(self):
         return np.frombuffer(self.sound.raw_data, np.uint8)
 
+    def _get_fft(self):
+        return [np.fft.fft(block) for block in np.array_split(
+            self.audio_stream,
+            len(self.audio_stream) // self.BLOCK_SIZE)]
+
 
 m = AudioData(musical_instruments['violin'])
-n = m.max_volume
+n = m.audio_stream
 print(n)
