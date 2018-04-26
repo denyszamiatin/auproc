@@ -49,17 +49,17 @@ class AudioData:
             self.audio_stream,
             len(self.audio_stream) // self.BLOCK_SIZE)]
 
-    def _get_blocks_stream_fft(self):
-        ftt = self._get_fft()
-        for stream_block in ftt:
+    def _get_blocks_stream_fft(self, get_fft):
+        for stream_block in get_fft:
             yield np.mean(stream_block)
 
     def _get_average_fft(self):
-        blocks_stream_fft = self._get_blocks_stream_fft()
-        return np.mean(list(blocks_stream_fft))
-
+        return list(self._get_blocks_stream_fft(self._get_fft()))
 
 
 m = AudioData(musical_instruments['violin'])
 n = m._get_average_fft()
-print(n)
+
+for mean_values in n:
+    print(mean_values)
+
